@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/bignut/tcpip/apps",
+  "command": "/usr/bin/c++  -I/home/bignut/tcpip/util -I/home/bignut/tcpip/src -std=gnu++20 -o CMakeFiles/stream_copy.dir/bidirectional_stream_copy.cc.o -c /home/bignut/tcpip/apps/bidirectional_stream_copy.cc",
+  "file": "/home/bignut/tcpip/apps/bidirectional_stream_copy.cc"
+},
+{
+  "directory": "/home/bignut/tcpip/apps",
+  "command": "/usr/bin/c++  -I/home/bignut/tcpip/util -I/home/bignut/tcpip/src -std=gnu++20 -o CMakeFiles/webget.dir/webget.cc.o -c /home/bignut/tcpip/apps/webget.cc",
+  "file": "/home/bignut/tcpip/apps/webget.cc"
+}
+]

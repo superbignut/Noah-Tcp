@@ -5,3 +5,10 @@
 **/*\#
 .vscode/
 build/
+Makefile
+cmake*
+CMakeCache.txt
+.cache/
+CMakeFiles/
+debug/
+example/

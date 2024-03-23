@@ -5,10 +5,11 @@
 #include <span>
 #include <string>
 
+
 void get_URL(const std::string &host, const std::string &path)
 {
     std::cerr << "Function called: get_URL(" << host << ", " << path << ")\n";
-    std::cerr << "Warning: get_URL() has not been implemented yet.\n";
+    // TCPSocket sock{};
 }
 
 int main(int argc, char *argv[])
