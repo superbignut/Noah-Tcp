@@ -7,6 +7,8 @@
 #include <iostream>
 #include <string_view>
 
+#define BUF_SIZE 1024
+
 void error_handling(std::string_view message)
 {
     std::cerr << message << std::endl;
@@ -19,7 +21,7 @@ int main(int argc, char *argv[])
     int sock;
     struct sockaddr_in server_addr;
 
-    char message[13];
+    char message[BUF_SIZE];
 
     int str_len;
 
@@ -38,24 +40,34 @@ int main(int argc, char *argv[])
 
     memset(&server_addr, 0, sizeof(server_addr));
 
-    server_addr.sin_family = AF_INET;                   // IPv4
-    inet_aton(argv[1], &server_addr.sin_addr);          // Ip
-    server_addr.sin_port = htons(atoi(argv[2]));        // port
+    server_addr.sin_family = AF_INET;            // IPv4
+    inet_aton(argv[1], &server_addr.sin_addr);   // Ip
+    server_addr.sin_port = htons(atoi(argv[2])); // port
 
     if (connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) // client的<ip>和<port>自动分配
     {
-        perror("Error");
         error_handling("connect() error");
     }
+    else
+    {
+        std::cout << "Connected..........." << std::endl;
+    }
 
-    str_len = read(sock, message, sizeof(message)); // 为什么-1 从client的fd上读出来数据
-    std::cout << str_len << std::endl;
-    if (str_len == -1)
-        error_handling("read() error");
+    while (true)
+    {
+        std::cout << "Input message(Q to quit): " << std::endl;
+        fgets(message, BUF_SIZE, stdin); // \n is also included.
 
-    std::cout << "Message from server is :" << message << std::endl;
+        if (!strcmp(message, "q\n") || !strcmp(message, "Q\n"))
+            break;
+        
+        write(sock, message, strlen(message));
 
-    // 可以write数据
+        str_len = read(sock, message, BUF_SIZE - 1);
+
+        message[str_len] = 0; // 0-ascii
+        std::cout << "Message from server: " << message << std::endl;
+    }
     close(sock);
 
     return EXIT_SUCCESS;

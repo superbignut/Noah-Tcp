@@ -7,6 +7,8 @@
 #include <iostream>
 #include <string_view>
 
+#define BUF_SIZE 1024
+
 void error_handling(std::string_view message)
 {
   std::cerr << message << std::endl;
@@ -15,15 +17,15 @@ void error_handling(std::string_view message)
 
 int main(int argc, char *argv[])
 {
-  int server_sock; // 两个socket
-  int client_sock;
+  int server_sock;  // 监听socket
+  int client_sock;  // 连接socket 
 
   struct sockaddr_in server_addr; //
   struct sockaddr_in client_addr;
 
   socklen_t client_addr_size; // unsigned int
 
-  char message[] = "Hello World!";
+  char message[BUF_SIZE];
 
   if (argc != 2)
   {
@@ -33,7 +35,6 @@ int main(int argc, char *argv[])
   }
 
   server_sock = socket(PF_INET, SOCK_STREAM, 0); // IPv4 socket
-
   if (server_sock == -1)
     error_handling("socket() error");
 
@@ -50,14 +51,28 @@ int main(int argc, char *argv[])
     error_handling("Listen() error");
 
   client_addr_size = sizeof(client_addr);
-  client_sock = accept(server_sock, (struct sockaddr *)&client_addr, &client_addr_size); // 返回一个新的client的fd
-  if (client_sock == -1)
-    error_handling("accept() error");
 
-  write(client_sock, message, sizeof(message)); // 传输数据，写到client的fd上
 
-  close(client_sock);
-  // 可以读到数据
+  std::size_t num = 0;
+  std::size_t str_len = 0;
+  while (true)
+  {
+    client_sock = accept(server_sock, (struct sockaddr *)&client_addr, &client_addr_size); // 返回一个新的client的fd
+    if (client_sock == -1)
+      error_handling("accept() error");
+    else
+      std::cout << "Connected client: " << ++num << std::endl;
+
+    while((str_len = read(client_sock, message, BUF_SIZE)) != 0) {
+      // Todo read and write is puzzling!!
+      write(client_sock, message, str_len);
+    }
+    
+
+
+    close(client_sock);
+  }
+
   close(server_sock);
 
   return EXIT_SUCCESS;
@@ -66,8 +81,8 @@ int main(int argc, char *argv[])
 /*
 socket()
 bind()
-listen() 加入未连接队列，等待三次握手成功后，放入连接成功队列
-accept() 从握手成功的队列取出首元素
+listen(server_sock) 加入未连接队列，等待三次握手成功后，放入连接成功队列
+accept(server_sock) 从握手成功的队列取出首元素
 read() / write()
 close()
 */

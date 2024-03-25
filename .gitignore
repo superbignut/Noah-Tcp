@@ -12,3 +12,6 @@ CMakeCache.txt
 CMakeFiles/
 debug/
 example/
+**/main
+**/client
+**/server

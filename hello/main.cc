@@ -1,20 +1,17 @@
 #include <iostream>
+#include <string.h>
+int main()
+{
 
-int main(){ 
+    struct test
+    {
+        int b = 2;
+        long a = 1;
+    };
 
-    union{
+    struct test aaa;
+    memset(&aaa,0, sizeof(test));
 
-        short s;
-        char c[sizeof(short)];
-    } un;
-
-    un.s = 0x0102;
-
-    if(sizeof(short) == 2){
-        std::cout <<"yes" << std::endl;
-        if(un.c[0] == 2 && un.c[1] == 1) {
-            std::cout << "short computert!!\n";
-        }
-    }
+    std::cout << aaa.b << " " << aaa.b << " " << sizeof(test);
     return 0;
 }
