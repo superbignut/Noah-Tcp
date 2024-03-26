@@ -15,3 +15,6 @@ example/
 **/main
 **/client
 **/server
+apps/
+util/
+test/
