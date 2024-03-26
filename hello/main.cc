@@ -2,16 +2,10 @@
 #include <string.h>
 int main()
 {
+    int a;
+    
 
-    struct test
-    {
-        int b = 2;
-        long a = 1;
-    };
 
-    struct test aaa;
-    memset(&aaa,0, sizeof(test));
-
-    std::cout << aaa.b << " " << aaa.b << " " << sizeof(test);
+    std::cout <<scanf("%d", &a)<< std::endl;
     return 0;
 }

@@ -9,6 +9,10 @@
 
 #define BUF_SIZE 1024
 
+#define RLT_SIZE 4
+
+#define OPSZ 4
+
 void error_handling(std::string_view message)
 {
     std::cerr << message << std::endl;
@@ -17,13 +21,8 @@ void error_handling(std::string_view message)
 
 int main(int argc, char *argv[])
 {
-
     int sock;
     struct sockaddr_in server_addr;
-
-    char message[BUF_SIZE];
-
-    int str_len;
 
     if (argc != 3)
     {
@@ -50,25 +49,40 @@ int main(int argc, char *argv[])
     }
     else
     {
-        std::cout << "Connected..........." << std::endl;
+        std::cout << "Connected Successfully..........." << std::endl;
     }
 
-    while (true)
+    fputs("Operand count: ", stdout);
+
+    int operand_cnt, str_len, receive_len, receive_cnt, result;
+
+    char msg[BUF_SIZE];
+
+    scanf("%d", &operand_cnt); // 读取一个数字
+
+    msg[0] = char(operand_cnt);
+
+    for (int i = 0; i < operand_cnt; ++i)
     {
-        std::cout << "Input message(Q to quit): " << std::endl;
-        fgets(message, BUF_SIZE, stdin); // \n is also included.
+        printf("Oprand %d : ", i + 1);
 
-        if (!strcmp(message, "q\n") || !strcmp(message, "Q\n"))
-            break;
-        
-        write(sock, message, strlen(message)); // 可以等一会？
-
-        str_len = read(sock, message, BUF_SIZE - 1);
-
-        message[str_len] = 0; // 0-ascii
-        std::cout << "Message from server: " << message << std::endl;
+        scanf("%d", (int *)&msg[i * OPSZ + 1]);
     }
+    fgetc(stdin); // 吃掉回车
+
+    fputs("Operator: ", stdout);
+
+    scanf("%c", &msg[operand_cnt * OPSZ + 1]);
+
+    write(sock, msg, operand_cnt * OPSZ + 2);
+
+    read(sock, &result, RLT_SIZE);
+
+    printf("Result is : %d\n", result);
+
     close(sock);
+    // 可以理解这个close为单向的关闭，发送完缓冲区数据后，发送EOF，即进行第一次挥手，服务器受到后，内核自动ack了，并返回一个read的 EOF，让用户态知道，
+    // 然后直到服务器端close 时，开始第三次挥手，客户端这边进行第四次ack， 当然这些内容都是内核中进行的。
 
     return EXIT_SUCCESS;
 }
@@ -76,7 +90,6 @@ int main(int argc, char *argv[])
 /*
 socket
 connect 第二次握手，发出第三个ACK之后，就成功跳出
-
 
 潜在问题：
 

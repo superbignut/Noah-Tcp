@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
 
   client_addr_size = sizeof(client_addr);
 
-
   std::size_t num = 0;
   std::size_t str_len = 0;
   while (true)
@@ -63,14 +62,14 @@ int main(int argc, char *argv[])
     else
       std::cout << "Connected client: " << ++num << std::endl;
 
-    while((str_len = read(client_sock, message, BUF_SIZE)) != 0) { // 一只读 
+    while((str_len = read(client_sock, message, BUF_SIZE)) != 0) { // 一只读，读到客户端close之后，跳出，也执行close？ 那他怎么分的清，谁是客户端谁是服务器呢
       // Todo read and write is puzzling!!
       write(client_sock, message, str_len);
     }
     close(client_sock);
   }
 
-  close(server_sock);
+  close(server_sock);// 这里调用了close之后，剩下的应该就是内核进行接管了
 
   return EXIT_SUCCESS;
 }

@@ -9,23 +9,45 @@
 
 #define BUF_SIZE 1024
 
+#define RLT_SIZE 4
+
+#define OPSZ 4
+
 void error_handling(std::string_view message)
 {
   std::cerr << message << std::endl;
   exit(1);
 }
 
+int calculate(int opnum, int opnds[], char op)
+{
+  int sum = 0;
+  for (int i = 0; i < opnum; ++i)
+  {
+    if (op == '+')
+      sum += opnds[i];
+    if (op == '-')
+      sum -= opnds[i];
+    if (op == '*')
+      sum *= opnds[i];
+
+    if (op == '/')
+      sum /= opnds[i];
+  }
+  return sum;
+}
+
 int main(int argc, char *argv[])
 {
-  int server_sock;  // 监听socket
-  int client_sock;  // 连接socket 
+  int server_sock; // 监听socket
+  int client_sock; // 连接socket
 
   struct sockaddr_in server_addr; //
   struct sockaddr_in client_addr;
 
   socklen_t client_addr_size; // unsigned int
 
-  char message[BUF_SIZE];
+  char msg[BUF_SIZE];
 
   if (argc != 2)
   {
@@ -52,9 +74,8 @@ int main(int argc, char *argv[])
 
   client_addr_size = sizeof(client_addr);
 
+  int operand_cnt = 0, num = 0;
 
-  std::size_t num = 0;
-  std::size_t str_len = 0;
   while (true)
   {
     client_sock = accept(server_sock, (struct sockaddr *)&client_addr, &client_addr_size); // 返回一个新的client的fd
@@ -63,14 +84,24 @@ int main(int argc, char *argv[])
     else
       std::cout << "Connected client: " << ++num << std::endl;
 
-    while((str_len = read(client_sock, message, BUF_SIZE)) != 0) { // 一只读 
-      // Todo read and write is puzzling!!
-      write(client_sock, message, str_len);
+    read(client_sock, &operand_cnt, 1); // 读取 输入 运算数字的个数
+
+    int receive_len = 0, receive_cnt = 0;
+
+    while (receive_len < operand_cnt * OPSZ + 1)
+    {
+      receive_cnt = read(client_sock, &msg[receive_len], BUF_SIZE - 1); // 读取运算数字的个数和运算符号
+      receive_len += receive_cnt;
     }
+
+    int result = calculate(operand_cnt, (int *)msg, msg[operand_cnt * OPSZ]);
+
+    write(client_sock, (char *)&result, sizeof(result));
+
     close(client_sock);
   }
 
-  close(server_sock);
+  close(server_sock); // 这里调用了close之后，剩下的应该就是内核进行接管了
 
   return EXIT_SUCCESS;
 }
@@ -80,6 +111,9 @@ socket()
 bind()
 listen(server_sock) 加入未连接队列，等待三次握手成功后，放入连接成功队列
 accept(server_sock) 从握手成功的队列取出首元素
-read() / write()  // client close时， read 返回0 
+read() / write()  // client close时， read 返回0
 close()
+I/O缓冲在每个TCP socket 中单独存在
+I/O缓冲在创建 socket 时自动生成 
+即使关闭 socket 也会继续传输缓冲中的数据，但是会丢失输入缓冲中的数据
 */

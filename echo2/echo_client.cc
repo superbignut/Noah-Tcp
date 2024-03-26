@@ -23,8 +23,6 @@ int main(int argc, char *argv[])
 
     char message[BUF_SIZE];
 
-    int str_len;
-
     if (argc != 3)
     {
         std::cout << "Usage ./xxx <IP> <port>\n";
@@ -53,22 +51,34 @@ int main(int argc, char *argv[])
         std::cout << "Connected..........." << std::endl;
     }
 
+    int str_len, receive_len, receive_cnt;
     while (true)
     {
         std::cout << "Input message(Q to quit): " << std::endl;
-        fgets(message, BUF_SIZE, stdin); // \n is also included.
+        fgets(message, BUF_SIZE, stdin); // \n is also included. 当让最后还有一个 null character.
 
         if (!strcmp(message, "q\n") || !strcmp(message, "Q\n"))
             break;
-        
-        write(sock, message, strlen(message)); // 可以等一会？
 
-        str_len = read(sock, message, BUF_SIZE - 1);
+        str_len = write(sock, message, strlen(message)); 
+
+        std::cout << "the number of str_len is : " << str_len << std::endl;
+
+        receive_len = 0;
+        while (receive_len < str_len) //
+        {
+            receive_cnt = read(sock, message, BUF_SIZE - 1);
+            if (receive_cnt == -1)
+                error_handling("read() error");
+            receive_len += receive_cnt;
+        }
 
         message[str_len] = 0; // 0-ascii
         std::cout << "Message from server: " << message << std::endl;
     }
     close(sock);
+    // 可以理解这个close为单向的关闭，发送完缓冲区数据后，发送EOF，即进行第一次挥手，服务器受到后，内核自动ack了，并返回一个read的 EOF，让用户态知道，
+    //然后直到服务器端close 时，开始第三次挥手，客户端这边进行第四次ack， 当然这些内容都是内核中进行的。
 
     return EXIT_SUCCESS;
 }
@@ -76,7 +86,6 @@ int main(int argc, char *argv[])
 /*
 socket
 connect 第二次握手，发出第三个ACK之后，就成功跳出
-
 
 潜在问题：
 
