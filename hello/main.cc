@@ -3,9 +3,12 @@
 int main()
 {
     int a;
-    
+    char msg[30];
 
+    fgets(msg,  30, stdin);
 
-    std::cout <<scanf("%d", &a)<< std::endl;
+    std::cout << strlen(msg)<< std::endl;
+
+    std::cout << msg << std::endl;
     return 0;
 }

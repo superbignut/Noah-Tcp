@@ -17,13 +17,14 @@ void error_handling(std::string_view message)
   exit(1);
 }
 
-void read_childproc(int sig)
+void read_childproc(int sig) // 处理子进程的回调函数
 {
   pid_t pid;
   int status;
-  pid = waitpid(-1, &status, WNOHANG);
+  pid = waitpid(-1, &status, WNOHANG); // 不阻塞
   printf("removed proc id: %d \n", pid);
 }
+
 int main(int argc, char *argv[])
 {
   int server_sock; // 监听socket
@@ -79,14 +80,16 @@ int main(int argc, char *argv[])
   {
     client_sock = accept(server_sock, (struct sockaddr *)&client_addr, &client_addr_size); // 正在阻塞的信号会被挂起，然后去处理信号去
     if (client_sock == -1)
-      {
-        if(errno == EINTR){
-          continue;
-        }
-        else{
-          error_handling("Accept() error.");
-        }
+    {
+      if (errno == EINTR)
+      { // 如果阻塞被信号打断
+        continue;
       }
+      else
+      {
+        error_handling("Accept() error.");
+      }
+    }
     else
       std::cout << "Connected client: " << ++num << std::endl;
 
@@ -94,7 +97,7 @@ int main(int argc, char *argv[])
 
     if (pid == -1) // fork出错
     {
-      close(client_sock);
+      close(client_sock); // 子进程失败，放弃这个socket
       continue;
     }
     if (pid == 0) // 子进程
@@ -108,7 +111,7 @@ int main(int argc, char *argv[])
       puts("client disconnected...");
       return 0;
     }
-    else //父进程
+    else // 父进程
     {
       close(client_sock); // 关闭父类进程中的 client socket
     }
