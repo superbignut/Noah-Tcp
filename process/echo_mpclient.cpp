@@ -45,7 +45,7 @@ void write_routine(int sock, char *buf) //读取用户的输入，然后写进so
             shutdown(sock, SHUT_WR); // 关闭写入流
             return;
         }
-        write(sock, message, strlen(message));
+        write(sock, message, strlen(message));// 这里的\n也被写入了
     }
 }
 
