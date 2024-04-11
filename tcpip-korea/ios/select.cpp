@@ -42,7 +42,8 @@ int main(int argc, char *argv[])
         {
             if (FD_ISSET(0, &temps))
             {
-                str_len = read(0, buf, BUF_SIZE); // 0代表标准输入，1代表标准输出，2代表标准错误
+                // 0代表标准输入，1代表标准输出，2代表标准错误 
+                str_len = read(0, buf, BUF_SIZE); // 这时候的read不会阻塞
                 
                 buf[str_len] = 0;
                 //write(1,buf,str_len+1);`1
