@@ -19,3 +19,5 @@ tcpip-korea/apps/
 tcpip-korea/util/
 tcpip-korea/test/
 tcpip-korea/dns/    
+**/*.o
+**/*.exe
