@@ -18,7 +18,6 @@
 
 /* rfc5731 puzzled.*/
 #define ETHER_TAP_IP_ADDR "192.0.2.2"
-
 /* 192.0.2.0/24 - This block is assigned as "TEST-NET-1" for use in documentation and example code. */
 #define DEFAULT_GATEWAY "192.0.2.1"
 
