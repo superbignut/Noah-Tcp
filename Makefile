@@ -20,7 +20,7 @@ CFLAGS := $(CFLAGS) -g -Wextra -Wall -Wunused-variable -iquote .
 ifeq ($(shell uname),Linux)
 	BASE = platform/linux
 	CFLAGS := $(CFLAGS) -iquote $(BASE)
-# CFLAGS := $(CFLAGS) -pthread Removed temporarily.
+	CFLAGS := $(CFLAGS) -pthread 
 endif
 
 # -pthread Define additional macros required for using the POSIX threads library. 

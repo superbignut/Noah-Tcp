@@ -15,9 +15,7 @@
 */
 
 
-/// @brief 打印函数,被ERROR, WARNING, INFO, DEBUG 宏展开后间接调用,以 _error(...)举例：
-///        _error("%s, %d", "Hello", 123); 其中格式化字符串传给fmt, Hello和123传给可变参数
-///        在log_printf 函数内部,使用vfprintf 将可变参数以fmt的格式输出,并附加时间和位置信息
+/// @brief Log function using vfprintf,called by micro: ERROR, WARNING, INFO, DEBUG.
 /// @param fp 
 /// @param level 
 /// @param file 
@@ -25,7 +23,7 @@
 /// @param func 
 /// @param fmt 
 /// @param 
-/// @return 打印的总字节数
+/// @return The number of bytes has been printed.
 int log_printf(FILE *fp, int level, const char *file, int line, const char *func, const char *fmt, ...)
 {
     struct timeval tv_time;
@@ -67,7 +65,7 @@ int log_printf(FILE *fp, int level, const char *file, int line, const char *func
     return num_to_printf;
 }
 
-/// @brief 打印字符串数组的每个字节，核心使用fprintf(fp, "%02x ", src);
+/// @brief Print every byte of the data array using fprintf(fp, "%02x ", src);
 /// @param fp 
 /// @param data 
 /// @param size 

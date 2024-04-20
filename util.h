@@ -31,14 +31,35 @@
     !Time
 */
 
-#define timeval_add_usec(x, y) 
 
-#define timespec_add_nsec(x, y) 
+/* Add u_second variable y to timeval-struct variable x */
+#define timeval_add_usec(x, y)          \
+    do {                                \
+        (x)->tv_sec += (y) / 1000000;   \
+        (x)->tv_usec += (y) % 1000000;  \
+        if((x)->tv_usec >= 1000000){    \
+            (x)->tv_sec += 1;           \
+            (x)->tv_usec -= 1000000;    \
+        }                               \
+    }while(0);                          
+
+/* Add n_second variable y to timeval-struct variable x */
+#define timespec_add_nsec(x, y)             \
+    do {                                    \
+        (x)->tv_sec += (y) / 1000000000;    \
+        (x)->tv_usec += (y) % 1000000000;   \
+        if((x)->tv_usec >= 1000000000){     \
+            (x)->tv_sec += 1;               \
+            (x)->tv_usec -= 1000000000;     \
+        }                                   \
+    }while(0);                              
+
 
 /*
     !Logging
 */
 
+/* _error(char * fmt, ...) */
 
 #define _error(...) log_printf(stderr, 'E', __FILE__, __LINE__, __func__, __VA_ARGS__)
 #define  _warn(...) log_printf(stderr, 'W', __FILE__, __LINE__, __func__, __VA_ARGS__)
