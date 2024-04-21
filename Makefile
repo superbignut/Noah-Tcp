@@ -3,12 +3,14 @@
 
 APP = 
 
-DRIVERS = 
+DRIVERS = driver/fake.o
 
 OBJS = util.o \
+		net.o \
 
 ########### EXE file given. ############
-TESTS = test/step0.exe \
+TESTS = test/step0.exe 	\
+		test/step1.exe	\
 
 CFLAGS := $(CFLAGS) -g -Wextra -Wall -Wunused-variable -iquote .
 

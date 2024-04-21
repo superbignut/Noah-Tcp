@@ -45,7 +45,7 @@ Each thread has a unique:
 
 /// @brief Allocate size bytes memory and init with 0.
 /// @param size
-/// @return
+/// @return the beginning of newly allocated memory when successful, NULL when failure.
 static inline void *memory_alloc(size_t size)
 {
     /* calloc() gives you a zero-initialized buffer, while malloc() leaves the memory uninitialized. */
