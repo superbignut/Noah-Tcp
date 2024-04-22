@@ -8,17 +8,17 @@
 static struct net_device *devices = NULL;
 
 
-/// @brief 
+/// @brief Allocate the memory for a net_device.
 struct net_device *net_device_alloc()
 {
     struct net_device *dev;
-    dev = memory_alloc(sizeof(dev));
+    dev = memory_alloc(sizeof(*dev)); /* sizeof(*dev) not sizeof(dev) */
     if(dev == NULL)
         return NULL;
     return dev; 
 }
 
-/// @brief 
+/// @brief Give a name: net%d, and rigister the dev into static-devices.
 /// @param dev 
 /// @return 
 int net_device_register(struct net_device *dev)
@@ -36,6 +36,9 @@ int net_device_register(struct net_device *dev)
     return 0;
 }
 
+/// @brief Open the device that has been closed, by calling relative open-function. Set the up_flag.
+/// @param dev 
+/// @return -1 when failure, 0 when success
 static int net_device_open(struct net_device *dev)
 {
     if(NET_DEVICE_IS_UP(dev)){ /* Open already. */
@@ -53,6 +56,9 @@ static int net_device_open(struct net_device *dev)
     return 0;
 }
 
+/// @brief Close the device that has been Opened, by calling relative close-function. Clear the up_flag.
+/// @param dev 
+/// @return -1 when failure, 0 when success
 static int net_device_close(struct net_device *dev)
 {
     if(!NET_DEVICE_IS_UP(dev)){ /* Close already. */
@@ -70,6 +76,13 @@ static int net_device_close(struct net_device *dev)
     return 0;
 }
 
+/// @brief Output the data to device-dst by calling relative transmit-function, len must less than dev->mtu.
+/// @param dev 
+/// @param type 
+/// @param data 
+/// @param len 
+/// @param dst 
+/// @return -1 when failure, 0 when success
 int net_device_output(struct net_device *dev, uint16_t type, const uint8_t *data, size_t len, const void *dst)
 {
     if(!NET_DEVICE_IS_UP(dev)){ /* Close already. */
@@ -98,6 +111,8 @@ int net_input_handler(uint16_t type, const uint8_t *data, size_t len, struct net
     return 0;
 }
 
+/// @brief Open all static-devices and 
+/// @return -1 when failure, 0 when success
 int net_run()
 {
     struct net_device *dev;
@@ -109,6 +124,7 @@ int net_run()
     return 0;
 }
 
+/// @brief Close all static-devices.
 void net_shutdown()
 {
     struct net_device *dev;
@@ -119,6 +135,8 @@ void net_shutdown()
     _debug("shutting down");
 }
 
+/// @brief 
+/// @return 
 int net_init()
 {
     _info("initialized");

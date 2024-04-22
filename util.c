@@ -232,7 +232,7 @@ static int endian = 0;
 /// @return 
 static int byteorder(){
     uint32_t x = 0x00000001;
-    return *(uint8_t*)x ? __LITTLE_ENDIAN : __BIG_ENDIAN;
+    return *(uint8_t*)&x ? __LITTLE_ENDIAN : __BIG_ENDIAN;
 }
 
 /// @brief 0x01_23 => 0x23_01
@@ -252,28 +252,28 @@ static uint32_t byteswap32(uint32_t v){
 
 uint16_t hton16(uint16_t h){
     if(endian == 0){
-        endian = byteorder;
+        endian = byteorder();
     }
     return endian == __BIG_ENDIAN ? h : byteswap16(h);
 }
 
 uint16_t ntoh16(uint16_t n){
     if(endian == 0){
-        endian = byteorder;
+        endian = byteorder();
     }
     return endian == __BIG_ENDIAN ? n : byteswap16(n);
 }
 
 uint32_t hton32(uint32_t h){
     if(endian == 0){
-        endian = byteorder;
+        endian = byteorder();
     }
     return endian == __BIG_ENDIAN ? h : byteswap32(h);
 }
 
 uint32_t ntoh32(uint32_t n){
     if(endian == 0){
-        endian = byteorder;
+        endian = byteorder();
     }
     return endian == __BIG_ENDIAN ? n : byteswap32(n);
 }

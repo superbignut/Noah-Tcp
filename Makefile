@@ -11,6 +11,7 @@ OBJS = util.o \
 ########### EXE file given. ############
 TESTS = test/step0.exe 	\
 		test/step1.exe	\
+		test/main.exe	\
 
 CFLAGS := $(CFLAGS) -g -Wextra -Wall -Wunused-variable -iquote .
 

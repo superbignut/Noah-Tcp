@@ -7,6 +7,13 @@
 
 #define FAKE_MTU UINT16_MAX
 
+/// @brief fake_device's transmit ops-function
+/// @param dev 
+/// @param type 
+/// @param data 
+/// @param len 
+/// @param dst 
+/// @return 
 static int fake_transmit(struct net_device *dev, uint16_t type, const uint8_t *data, size_t len, const void *dst)
 {
     _debug("dev=%s, type=0x%04x, len=%zu", dev->name, type, len);
@@ -18,6 +25,7 @@ static struct net_device_ops fake_ops = {
     .transmit = fake_transmit,
 };
 
+/// @brief Initialize the fake_device, by net_device_alloc, net_device_register and ops.
 struct net_device *fake_init()
 {
     struct net_device *dev;
